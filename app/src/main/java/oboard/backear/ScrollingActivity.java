@@ -190,7 +190,7 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
             }
         });
 
-        Spinner spinner = (Spinner) findViewById(R.id.input_channel);
+        Spinner spinner = findViewById(R.id.input_channel);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {

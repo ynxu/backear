@@ -64,18 +64,14 @@ public class PlayButton extends FloatingActionButton {
 
     //播放
     public void toPlay() {
-        if (isPlay) {
-            return;
-        } else {
+        if (!isPlay) {
             changeState();
         }
     }
 
     //暂停
     public void toPause() {
-        if (!isPlay) {
-            return;
-        } else {
+        if (isPlay) {
             changeState();
         }
     }
@@ -90,7 +86,7 @@ public class PlayButton extends FloatingActionButton {
             flag = false;
         }
         lastClickTime = currentClickTime;
-        return false;//flag;
+        return flag;//flag;
     }
 
     //获取当前播放状态
