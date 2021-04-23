@@ -3,7 +3,6 @@ package oboard.backear;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.AudioFormat;
@@ -11,7 +10,6 @@ import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -26,8 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +41,8 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
     float stereoVolume = 0;
     int inputSource = MediaRecorder.AudioSource.MIC;
     AudioManager audioManager;
-    List<byte[]> recBufL = new ArrayList<>();
-    List<Long> recBufT = new ArrayList<>();
+    List<byte[]> recBufVolume = new ArrayList<>();
+    List<Long> recBufTime = new ArrayList<>();
     //    private Handler handler = new Handler() {
 //        @Override
 //        public void handleMessage(Message msg) {
@@ -106,27 +102,35 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
         //setOutSpeak();
         //声音播放对象
         audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, frequency, channelConfiguration, audioEncoding, plyBufSize, AudioTrack.MODE_STREAM);
+
         audioRecord.startRecording();
         byte[] recBuf = new byte[recBufSize];
-        recBufL.clear();
-        recBufT.clear();
+        recBufVolume.clear();
+        recBufTime.clear();
         //延迟增强
         long startT = System.currentTimeMillis();
+        // 设置左右声道的音量
+//        audioTrack.setStereoVolume(0,1);
         audioTrack.play();
         while (isAlive) {
-
             final int readLen = audioRecord.read(recBuf, 0, recBufSize);//获取录音缓存值
             for (int i = 0; i < recBuf.length; i++) {
                 recBuf[i] *= increase;
             }
-            recBufL.add(recBuf.clone());
-            recBufT.add(System.currentTimeMillis() + increaseLate * 1000);
+//            // only play sound on left
+//            for(int i = 0; i < recBuf.length; i += 2){
+//                short sample = (short)(Math.sin(2 * Math.PI * i / (frequency)) * 0x7FFF);
+//                recBuf[i] *= increase;
+//                recBuf[i + 1] = 0;
+//            }
+            recBufVolume.add(recBuf.clone());
+            recBufTime.add(System.currentTimeMillis() + increaseLate * 1000);
 //            if (System.currentTimeMillis() - increaseLate * 1000 > startT) {
-            if (!recBufL.isEmpty()) {
-                if (System.currentTimeMillis() > recBufT.get(0)) {
-                    recBufL.remove(0);
-                    recBufT.remove(0);
-                    byte[] re = recBufL.get(0).clone();
+            if (!recBufVolume.isEmpty()) {
+                if (System.currentTimeMillis() > recBufTime.get(0)) {
+                    recBufVolume.remove(0);
+                    recBufTime.remove(0);
+                    byte[] re = recBufVolume.get(0).clone();
                     audioTrack.write(re, 0, re.length);//将获取到录音数据向声音播放对象写入
 //                    }
                 }
