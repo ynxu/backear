@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="输入声道" />
         <Spinner
-            android:id="@+id/spinner1"
+            android:id="@+id/input_channel"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:entries="@array/channels" />
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:text="输入来源" />
         <Spinner
-            android:id="@+id/spinner2"
+            android:id="@+id/input_source"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:entries="@array/inputs" />
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:text="输出设备（测试）" />
         <Spinner
-            android:id="@+id/spinner3"
+            android:id="@+id/output_device"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:entries="@array/channels2" />
@@ -56,7 +56,7 @@
                 android:text="输出相对音量（测试）" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/output_volume_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1x"
@@ -65,7 +65,7 @@
         </LinearLayout>
 
         <SeekBar
-            android:id="@+id/seekBar"
+            android:id="@+id/seekbar_output_volume"
             style="@style/Widget.AppCompat.SeekBar.Discrete"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -83,7 +83,7 @@
                 android:text="输出声道平衡" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/output_channel_balance_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
@@ -92,7 +92,7 @@
         </LinearLayout>
 
         <SeekBar
-            android:id="@+id/seekBar2"
+            android:id="@+id/seekbar_output_channel_balance"
             style="@style/Widget.AppCompat.SeekBar.Discrete"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -112,7 +112,7 @@
                 android:text="输出延迟" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/textview_output_delay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0秒"
@@ -121,7 +121,7 @@
         </LinearLayout>
 
         <SeekBar
-            android:id="@+id/seekBar3"
+            android:id="@+id/seekbar_output_delay"
             style="@style/Widget.AppCompat.SeekBar.Discrete"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -133,11 +133,6 @@
             android:layout_height="wrap_content"
             android:text="@string/large_text" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="捐赠"
-            android:onClick="juanzeng"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

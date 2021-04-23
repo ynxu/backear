@@ -10,6 +10,7 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,10 +43,10 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
     float increase = 1;
     int increaseLate = 0;
     float stereoVolume = 0;
-    int inputSource = 1;
+    int inputSource = MediaRecorder.AudioSource.MIC;
     AudioManager audioManager;
-    List<byte[]> recBufL = new ArrayList<byte[]>();
-    List<Long> recBufT = new ArrayList<Long>();
+    List<byte[]> recBufL = new ArrayList<>();
+    List<Long> recBufT = new ArrayList<>();
     //    private Handler handler = new Handler() {
 //        @Override
 //        public void handleMessage(Message msg) {
@@ -59,12 +60,11 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
     public static void checkPermission(AppCompatActivity activity) {
         int checkPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO);
         if (checkPermission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, new String[]{
-                    Manifest.permission.RECORD_AUDIO}, 123);
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.RECORD_AUDIO}, 123);
         }
     }
 
-    //    //需要录音权限
+//    //需要录音权限
 //
 //    @Override
 //
@@ -116,7 +116,9 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
         while (isAlive) {
 
             final int readLen = audioRecord.read(recBuf, 0, recBufSize);//获取录音缓存值
-            for (int i = 0; i < recBuf.length; i++) recBuf[i] *= increase;
+            for (int i = 0; i < recBuf.length; i++) {
+                recBuf[i] *= increase;
+            }
             recBufL.add(recBuf.clone());
             recBufT.add(System.currentTimeMillis() + increaseLate * 1000);
 //            if (System.currentTimeMillis() - increaseLate * 1000 > startT) {
@@ -188,7 +190,7 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
             }
         });
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner1);
+        Spinner spinner = (Spinner) findViewById(R.id.input_channel);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
@@ -203,8 +205,8 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
             }
         });
 
-        Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
-        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Spinner spinnerInputSource = findViewById(R.id.input_source);
+        spinnerInputSource.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
                 //String[] channels = getResources().getStringArray(R.array.channels);
@@ -219,21 +221,21 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
         });
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 
-        Spinner spinner3 = (Spinner) findViewById(R.id.spinner3);
-        spinner3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Spinner spinnerOutputDevice = findViewById(R.id.output_device);
+        spinnerOutputDevice.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
                 //String[] channels = getResources().getStringArray(R.array.channels);
                 switch (pos) {
                     //切换到外放
-/*注意此处，蓝牙未断开时使用MODE_IN_COMMUNICATION而不是MODE_NORMAL*/
+                    /*注意此处，蓝牙未断开时使用MODE_IN_COMMUNICATION而不是MODE_NORMAL*/
                     case 0:
                         audioManager.setMode(audioManager.isBluetoothScoOn() ? AudioManager.MODE_IN_COMMUNICATION : AudioManager.MODE_NORMAL);
                         audioManager.stopBluetoothSco();
                         audioManager.setBluetoothScoOn(false);
                         audioManager.setSpeakerphoneOn(true);
                         break;
-/*切换到蓝牙音箱*/
+                    /*切换到蓝牙音箱*/
                     case 1:
                         audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
                         audioManager.startBluetoothSco();
@@ -247,7 +249,7 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
                         audioManager.setBluetoothScoOn(false);
                         audioManager.setSpeakerphoneOn(false);
                         break;
-/*切换到听筒 */
+                    /*切换到听筒 */
                     case 3:
                         audioManager.setSpeakerphoneOn(false);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -266,13 +268,13 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
             }
         });
 
-        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-        final TextView textView = (TextView) findViewById(R.id.textView);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        SeekBar seekBarOutputVolume = findViewById(R.id.seekbar_output_volume);
+        final TextView textViewOutputVolume = findViewById(R.id.output_volume_view);
+        seekBarOutputVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                textView.setText(" " + i + "x");
+                textViewOutputVolume.setText(" " + i + "x");
                 increase = i;
             }
 
@@ -286,12 +288,12 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
 
             }
         });
-        SeekBar seekBar2 = (SeekBar) findViewById(R.id.seekBar2);
-        final TextView textView2 = (TextView) findViewById(R.id.textView2);
-        seekBar2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        SeekBar seekBarOutputChannelBalance = findViewById(R.id.seekbar_output_channel_balance);
+        final TextView textViewOutputChannelBalance = findViewById(R.id.output_channel_balance_view);
+        seekBarOutputChannelBalance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                textView2.setText(String.valueOf(Float.parseFloat(String.valueOf(i - 5)) / 5));
+                textViewOutputChannelBalance.setText(String.valueOf(Float.parseFloat(String.valueOf(i - 5)) / 5));
                 stereoVolume = Float.valueOf(String.valueOf(Integer.valueOf(i).toString())) / 10;
                 if (audioTrack != null)
                     audioTrack.setStereoVolume(1 - stereoVolume, stereoVolume);
@@ -307,13 +309,13 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
 
             }
         });
-        SeekBar seekBar3 = findViewById(R.id.seekBar3);
-        final TextView textView3 = findViewById(R.id.textView3);
-        seekBar3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        SeekBar seekBarOutputDelay = findViewById(R.id.seekbar_output_delay);
+        final TextView textViewOutputDelay = findViewById(R.id.textview_output_delay);
+        seekBarOutputDelay.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                textView3.setText(" " + i + "秒");
+                textViewOutputDelay.setText(" " + i + "秒");
                 increaseLate = i;
             }
 
@@ -343,7 +345,7 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
         super.onConfigurationChanged(newConfig);
     }
 
-    public void juanzeng(View view) {
+    /*public void juanzeng(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         String str = "";
         try {
@@ -357,6 +359,6 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setData(uri);
         startActivity(intent);
-    }
+    }*/
 
 }
