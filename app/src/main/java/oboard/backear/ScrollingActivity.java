@@ -173,7 +173,7 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
             toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay);
         }
 
-        final PlayButton fab = (PlayButton) findViewById(R.id.fab);
+        final PlayButton fab = findViewById(R.id.fab);
         fab.setOnPlayOrPauseClick(new PlayButton.OnPlayOrPauseClick() {
             @Override
             public void onClick(boolean isPlay) {
@@ -226,31 +226,28 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
                 //String[] channels = getResources().getStringArray(R.array.channels);
                 switch (pos) {
                     //切换到外放
-//注意此处，蓝牙未断开时使用MODE_IN_COMMUNICATION而不是MODE_NORMAL
+/*注意此处，蓝牙未断开时使用MODE_IN_COMMUNICATION而不是MODE_NORMAL*/
                     case 0:
                         audioManager.setMode(audioManager.isBluetoothScoOn() ? AudioManager.MODE_IN_COMMUNICATION : AudioManager.MODE_NORMAL);
                         audioManager.stopBluetoothSco();
                         audioManager.setBluetoothScoOn(false);
                         audioManager.setSpeakerphoneOn(true);
                         break;
-/*
-  切换到蓝牙音箱*/
+/*切换到蓝牙音箱*/
                     case 1:
                         audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
                         audioManager.startBluetoothSco();
                         audioManager.setBluetoothScoOn(true);
                         audioManager.setSpeakerphoneOn(false);
                         break;
-//注意：以下两个方法还未验证
+                    /*注意：以下两个方法还未验证*/
                     case 2:
                         audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
                         audioManager.stopBluetoothSco();
                         audioManager.setBluetoothScoOn(false);
                         audioManager.setSpeakerphoneOn(false);
                         break;
-/*
-  切换到听筒
- */
+/*切换到听筒 */
                     case 3:
                         audioManager.setSpeakerphoneOn(false);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -310,8 +307,8 @@ public class ScrollingActivity extends AppCompatActivity implements Runnable {
 
             }
         });
-        SeekBar seekBar3 = (SeekBar) findViewById(R.id.seekBar3);
-        final TextView textView3 = (TextView) findViewById(R.id.textView3);
+        SeekBar seekBar3 = findViewById(R.id.seekBar3);
+        final TextView textView3 = findViewById(R.id.textView3);
         seekBar3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @SuppressLint("SetTextI18n")
             @Override

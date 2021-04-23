@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='耳机返听'
+rootProject.name='backear'
